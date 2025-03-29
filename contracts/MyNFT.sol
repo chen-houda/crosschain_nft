@@ -9,21 +9,24 @@ import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, Ownable {
+    // ipfs://协议等同https://ipfs.io/ipfs/+CID  
+    // 参照https://filebase.com/
+     string constant public METADATA_URI = "ipfs://QmY6p8iWXsDQ25Qq6hWy7yu46s6w2cWnbTYTpsr7PicjzA";
     uint256 private _nextTokenId;
 
     constructor(address initialOwner)
-        ERC721("MyToken", "MTK")
+        ERC721("MyTokenTest", "MTKT")
         Ownable(initialOwner)
     {}
 
-    function safeMint(address to, string memory uri)
+    function safeMint(address to)
         public
         onlyOwner
         returns (uint256)
     {
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+        _setTokenURI(tokenId, METADATA_URI);
         return tokenId;
     }
 
@@ -61,4 +64,6 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
     {
         return super.supportsInterface(interfaceId);
     }
+
+    
 }
