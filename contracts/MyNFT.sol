@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Compatible with OpenZeppelin Contracts ^5.0.0
-pragma solidity ^0.8.22;
+pragma solidity ^0.8.20;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721Burnable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
@@ -14,9 +14,9 @@ contract MyToken is ERC721, ERC721Enumerable, ERC721URIStorage, ERC721Burnable, 
      string constant public METADATA_URI = "ipfs://QmY6p8iWXsDQ25Qq6hWy7yu46s6w2cWnbTYTpsr7PicjzA";
     uint256 private _nextTokenId;
 
-    constructor(address initialOwner)
-        ERC721("MyTokenTest", "MTKT")
-        Ownable(initialOwner)
+    constructor(string memory tokeNmae, string memory tokeSymbol)
+        ERC721(tokeNmae, tokeSymbol)
+        Ownable(msg.sender)
     {}
 
     function safeMint(address to)
