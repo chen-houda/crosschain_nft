@@ -17,7 +17,7 @@ using SafeERC20 for IERC20;
  */
 
 /// @title - A simple messenger contract for sending/receiving data across chains and tracking the status of sent messages.
-contract MessageTracker is CCIPReceiver, OwnerIsCreator {
+contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
     // Custom errors to provide more descriptive revert messages.
     error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees); // Used to make sure contract has enough balance.
     error NothingToWithdraw(); // Used when trying to withdraw Ether but there's nothing to withdraw.
