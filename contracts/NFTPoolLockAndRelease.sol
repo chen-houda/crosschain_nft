@@ -21,9 +21,6 @@ contract MessageTracker is CCIPReceiver, OwnerIsCreator {
     // Custom errors to provide more descriptive revert messages.
     error NotEnoughBalance(uint256 currentBalance, uint256 calculatedFees); // Used to make sure contract has enough balance.
     error NothingToWithdraw(); // Used when trying to withdraw Ether but there's nothing to withdraw.
-    error DestinationChainNotAllowlisted(uint64 destinationChainSelector); // Used when the destination chain has not been allowlisted by the contract owner.
-    error SourceChainNotAllowlisted(uint64 sourceChainSelector); // Used when the source chain has not been allowlisted by the contract owner.
-    error SenderNotAllowlisted(address sender); // Used when the sender has not been allowlisted by the contract owner.
     error InvalidReceiverAddress(); // Used when the receiver address is 0.
     error MessageWasNotSentByMessageTracker(bytes32 msgId); // Triggered when attempting to confirm a message not recognized as sent by this tracker.
     error MessageHasAlreadyBeenProcessedOnDestination(bytes32 msgId); // Triggered when trying to mark a message as `ProcessedOnDestination` when it is already marked as such.
