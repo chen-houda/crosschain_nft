@@ -56,8 +56,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
         address newOwner;
     }
 
-    // remember to add visibility for the variable
-    mapping(uint256 => bool) public tokenLocked;
+
 
     /// @notice Constructor initializes the contract with the router address.
     /// @param _router The address of the router contract.
@@ -100,7 +99,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
             destReceiver,
             payload
         );
-        tokenLocked[tokenId] = true;
+ 
         return messageId;
     }
 

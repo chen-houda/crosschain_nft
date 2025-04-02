@@ -30,7 +30,7 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         bytes32 indexed messageId, // The unique ID of the CCIP message.
         uint64 indexed destinationChainSelector, // The chain selector of the destination chain.
         address receiver, // The address of the receiver on the destination chain.
-        bytes  text, // The text being sent.
+        bytes text, // The text being sent.
         address feeToken, // the token address used to pay CCIP fees.
         uint256 fees // The fees paid for sending the CCIP message.
     );
@@ -42,6 +42,11 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         address sender, // The address of the sender from the source chain.
         string text // The text that was received.
     );
+      // Event emitted when a message is received from another chain.
+    event TokenUnlocked(
+        uint256 tokenId,
+        address newOwner
+    );
 
     bytes32 private s_lastReceivedMessageId; // Store the last received messageId.
     string private s_lastReceivedText; // Store the last received text.
@@ -49,6 +54,10 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
     IERC20 private s_linkToken;
     // remember to add visibility for the variable
     MyToken public nft;
+    struct RequestData {
+        uint256 tokenId;
+        address newOwner;
+    }
 
     // remember to add visibility for the variable
     mapping(uint256 => bool) public tokenLocked;
@@ -56,7 +65,11 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
     /// @notice Constructor initializes the contract with the router address.
     /// @param _router The address of the router contract.
     /// @param _link The address of the link contract.
-    constructor(address _router, address _link, address nftAddr) CCIPReceiver(_router) {
+    constructor(
+        address _router,
+        address _link,
+        address nftAddr
+    ) CCIPReceiver(_router) {
         s_linkToken = IERC20(_link);
         nft = MyToken(nftAddr);
     }
@@ -150,14 +163,12 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         Client.Any2EVMMessage memory any2EvmMessage
     ) internal override {
         s_lastReceivedMessageId = any2EvmMessage.messageId; // fetch the messageId
-        s_lastReceivedText = abi.decode(any2EvmMessage.data, (string)); // abi-decoding of the sent text
-
-        emit MessageReceived(
-            any2EvmMessage.messageId,
-            any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
-            abi.decode(any2EvmMessage.sender, (address)), // abi-decoding of the sender address,
-            abi.decode(any2EvmMessage.data, (string))
-        );
+        RequestData memory requestData = abi.decode(any2EvmMessage.data, (RequestData));
+        uint256 tokenId = requestData.tokenId;
+        address newOwner = requestData.newOwner;
+        require(tokenLocked[tokenId], "the NFT is not locked");
+        nft.transferFrom(address(this), newOwner, tokenId);
+        emit TokenUnlocked(tokenId, newOwner);
     }
 
     /// @notice Construct a CCIP message.
