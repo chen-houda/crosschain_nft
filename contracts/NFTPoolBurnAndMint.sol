@@ -8,6 +8,7 @@ import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/utils/SafeERC20.sol";
 import {MyToken} from "./MyNFT.sol";
+import {WrappedMyToken} from "./WrappedNFT.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -30,7 +31,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
         bytes32 indexed messageId, // The unique ID of the CCIP message.
         uint64 indexed destinationChainSelector, // The chain selector of the destination chain.
         address receiver, // The address of the receiver on the destination chain.
-        bytes  text, // The text being sent.
+        bytes text, // The text being sent.
         address feeToken, // the token address used to pay CCIP fees.
         uint256 fees // The fees paid for sending the CCIP message.
     );
@@ -48,7 +49,12 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
 
     IERC20 private s_linkToken;
     // remember to add visibility for the variable
-    MyToken public nft;
+    WrappedMyToken public wnft;
+
+    struct RequestData {
+        uint256 tokenId;
+        address newOwner;
+    }
 
     // remember to add visibility for the variable
     mapping(uint256 => bool) public tokenLocked;
@@ -56,8 +62,13 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
     /// @notice Constructor initializes the contract with the router address.
     /// @param _router The address of the router contract.
     /// @param _link The address of the link contract.
-    constructor(address _router, address _link) CCIPReceiver(_router) {
+    constructor(
+        address _router,
+        address _link,
+        address nftAddr
+    ) CCIPReceiver(_router) {
         s_linkToken = IERC20(_link);
+        wnft = WrappedMyToken(nftAddr);
     }
 
     /// @dev Modifier that checks the receiver address is not 0.
@@ -78,9 +89,11 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
         // comment this because the check is already performed by ERC721
         // require(nft.ownerOf(tokenId) == msg.sender, "you are not the owner of the NFT");
 
-        // tansfer the NFT from owner to the pool
-        nft.transferFrom(msg.sender, address(this), tokenId);
-        // send request to Chainlink CCIP to send the NFT to the other Chain
+        // transfer NFT to the pool
+        wnft.transferFrom(msg.sender, address(this), tokenId);
+        // burn the NFT
+        wnft.burn(tokenId);
+        // send transaction to the destination chain
         bytes memory payload = abi.encode(tokenId, newOwner);
         bytes32 messageId = sendMessagePayLINK(
             destChainSelector,
@@ -148,6 +161,16 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
     function _ccipReceive(
         Client.Any2EVMMessage memory any2EvmMessage
     ) internal override {
+        RequestData memory reqData = abi.decode(
+            any2EvmMessage.data,
+            (RequestData)
+        );
+        address newOwner = reqData.newOwner;
+        uint256 tokenId = reqData.tokenId;
+
+        // mint a wrappedToken
+        wnft.mintWithSpecificTokenId(newOwner, tokenId);
+
         s_lastReceivedMessageId = any2EvmMessage.messageId; // fetch the messageId
         s_lastReceivedText = abi.decode(any2EvmMessage.data, (string)); // abi-decoding of the sent text
 
