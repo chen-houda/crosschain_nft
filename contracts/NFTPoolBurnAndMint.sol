@@ -44,6 +44,11 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
     //     string text // The text that was received.
     // );
 
+    event TokenMinted(
+        uint256 tokenId, // The ID of the minted token.
+        address newOwner // The address of the receiver.
+    );
+
     bytes32 private s_lastReceivedMessageId; // Store the last received messageId.
     string private s_lastReceivedText; // Store the last received text.
 
@@ -55,8 +60,6 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
         uint256 tokenId;
         address newOwner;
     }
-
-
 
     /// @notice Constructor initializes the contract with the router address.
     /// @param _router The address of the router contract.
@@ -99,7 +102,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
             destReceiver,
             payload
         );
- 
+
         return messageId;
     }
 
@@ -169,8 +172,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
 
         // mint a wrappedToken
         wnft.mintWithSpecificTokenId(newOwner, tokenId);
-
-
+        emit TokenMinted(tokenId, newOwner);
         // emit MessageReceived(
         //     any2EvmMessage.messageId,
         //     any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
