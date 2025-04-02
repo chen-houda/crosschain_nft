@@ -37,12 +37,12 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
     );
 
     // Event emitted when a message is received from another chain.
-    event MessageReceived(
-        bytes32 indexed messageId, // The unique ID of the CCIP message.
-        uint64 indexed sourceChainSelector, // The chain selector of the source chain.
-        address sender, // The address of the sender from the source chain.
-        string text // The text that was received.
-    );
+    // event MessageReceived(
+    //     bytes32 indexed messageId, // The unique ID of the CCIP message.
+    //     uint64 indexed sourceChainSelector, // The chain selector of the source chain.
+    //     address sender, // The address of the sender from the source chain.
+    //     string text // The text that was received.
+    // );
 
     bytes32 private s_lastReceivedMessageId; // Store the last received messageId.
     string private s_lastReceivedText; // Store the last received text.
@@ -170,15 +170,13 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
         // mint a wrappedToken
         wnft.mintWithSpecificTokenId(newOwner, tokenId);
 
-        s_lastReceivedMessageId = any2EvmMessage.messageId; // fetch the messageId
-        s_lastReceivedText = abi.decode(any2EvmMessage.data, (string)); // abi-decoding of the sent text
 
-        emit MessageReceived(
-            any2EvmMessage.messageId,
-            any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
-            abi.decode(any2EvmMessage.sender, (address)), // abi-decoding of the sender address,
-            abi.decode(any2EvmMessage.data, (string))
-        );
+        // emit MessageReceived(
+        //     any2EvmMessage.messageId,
+        //     any2EvmMessage.sourceChainSelector, // fetch the source chain identifier (aka selector)
+        //     abi.decode(any2EvmMessage.sender, (address)), // abi-decoding of the sender address,
+        //     abi.decode(any2EvmMessage.data, (string))
+        // );
     }
 
     /// @notice Construct a CCIP message.
