@@ -1,17 +1,16 @@
+
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments;
-    const { deployer } = await getNamedAccounts();
-    const chainId = network.config.chainId;
-
+    const { firstAccount } = await getNamedAccounts();
     log("----------------------------------------------------");
     log("Deploying NFT and waiting for confirmations...");
 
-    const args = [];
-    const nft = await deploy("NFT", {
-        from: deployer,
+    const args = ["MyTokenOne", "MT"]; // Replace with your NFT name and symbol
+    const nft = await deploy("MyToken", {
+        contract: "myTokenOne",
+        from: firstAccount,
         args: args,
-        log: true,
-        waitConfirmations: network.config.blockConfirmations || 1,
+        log: true
     });
 
     log(`NFT deployed at ${nft.address}`);

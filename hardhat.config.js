@@ -5,7 +5,7 @@ require("hardhat-deploy-ethers");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity:{
+  solidity: {
     compilers: [
       {
         version: "0.8.22"
@@ -15,4 +15,12 @@ module.exports = {
       }
     ]
   },
+  namedAccounts: {
+    firstAccount: {
+      default: 0
+    },
+    secondAccount: {
+      default: 1
+    }
+  }
 };
