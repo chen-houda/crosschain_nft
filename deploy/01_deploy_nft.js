@@ -7,7 +7,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const args = ["MyTokenOne", "MT"]; // Replace with your NFT name and symbol
     const nft = await deploy("MyToken", {
-        contract: "myTokenOne",
+        contract: "MyToken",
         from: firstAccount,
         args: args,
         log: true

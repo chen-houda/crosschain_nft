@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     let nftAddr
 
     const nft = await deploy("NFTPoolLockAndRelease", {
-        contract: "nFTPoolLockAndRelease",
+        contract: "NFTPoolLockAndRelease",
         from: firstAccount,
         args: args,
         log: true
