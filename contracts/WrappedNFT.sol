@@ -6,8 +6,7 @@ import {MyToken} from "./MyNFT.sol";
 contract WrappedMyToken is MyToken {
     constructor(
         string memory tokeNmae,
-        string memory tokeSymbol,
-        address _originalTokenAddress
+        string memory tokeSymbol
     ) MyToken(tokeNmae, tokeSymbol) {}
 
     function mintWithSpecificTokenId(address to, uint256 _tokenId) public {

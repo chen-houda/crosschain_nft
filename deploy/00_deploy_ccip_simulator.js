@@ -12,6 +12,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         log: true
     });
 
-    log(`ccip deployed at ${nft.address}`);
+    log(`ccip deployed at ${ccip.address}`);
 }
 module.exports.tags = ["all", "test"]
