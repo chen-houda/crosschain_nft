@@ -8,7 +8,8 @@ let wnft
 let poolLnU
 let poolMnB
 let chainSelector
-before(async function () {
+
+before(async function(){
     firstAccount = (await getNamedAccounts()).firstAccount
     await deployments.fixture(["all"])
     nft = await ethers.getContract("MyToken", firstAccount)
@@ -18,9 +19,10 @@ before(async function () {
     ccipLocalSimulator = await ethers.getContract("CCIPLocalSimulator", firstAccount)
     chainSelector = (await ccipLocalSimulator.configuration()).chainSelector_
 })
+
 //source chain -?dest chain
 //test if user can mint a nft from nft contract successfuly
-describe("test if the nft can be minted successfully",
+describe("test if user can mint a nft from nft contract successfuly",
     async function () {
         it("test if the owner of nft is minter",
             async function () {
@@ -29,9 +31,34 @@ describe("test if the nft can be minted successfully",
                 // check the owner
                 const ownerOfNft = await nft.ownerOf(0)
                 expect(ownerOfNft).to.equal(firstAccount)
+                console.log("nft owner is: ", ownerOfNft)
             })
     })
 //test if user can lock the nft in the pool and send ccip message on source chain
+
+describe("test if user can lock the nft in the pool and send ccip message on source chain"
+    , async function() {
+        // transfer NFT from source chain to dest chain, check if the nft is locked
+        it("transfer NFT from source chain to dest chain, check if the nft is locked",
+            async function() { 
+                await nft.approve(poolLnU.target, 0)
+                await ccipLocalSimulator.requestLinkFromFaucet(poolLnU.target,ethers.parseEther("10"))
+                await poolLnU.lockAndSendNFT(0, firstAccount, chainSelector, poolMnB.target)
+                const newOwner = await nft.ownerOf(0)
+
+                expect(newOwner).to.equal(poolLnU.target)
+            }
+        )
+        // check if the wnft is owned by new owner
+        it("check if wnft's account is owner", 
+            async function() {
+               
+            }
+        )
+    }
+)
+
+
 
 //test if user can get a wrapped nft in dest chain
 
