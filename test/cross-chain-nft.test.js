@@ -1,6 +1,7 @@
 //prepqre variables:contract,account
 const { ethers, deployments, getNamedAccounts, network } = require("hardhat")
 const { assert, expect } = require("chai")
+<<<<<<< HEAD
 
 let firstAccount
 let nft
@@ -19,10 +20,32 @@ before(async function(){
     ccipLocalSimulator = await ethers.getContract("CCIPLocalSimulator", firstAccount)
     chainSelector = (await ccipLocalSimulator.configuration()).chainSelector_
 })
+=======
+>>>>>>> cf35ab649af04e1f13afbabc6f01ea712a62fc3f
 
+let firstAccount
+let nft
+let wnft
+let poolLnU
+let poolMnB
+let chainSelector
+before(async function () {
+    firstAccount = (await getNamedAccounts()).firstAccount
+    await deployments.fixture(["all"])
+    nft = await ethers.getContract("MyToken", firstAccount)
+    wnft = await ethers.getContract("WrappedMyToken", firstAccount)
+    poolLnU = await ethers.getContract("NFTPoolLockAndRelease", firstAccount)
+    poolMnB = await ethers.getContract("NFTPoolBurnAndMint", firstAccount)
+    ccipLocalSimulator = await ethers.getContract("CCIPLocalSimulator", firstAccount)
+    chainSelector = (await ccipLocalSimulator.configuration()).chainSelector_
+})
 //source chain -?dest chain
 //test if user can mint a nft from nft contract successfuly
+<<<<<<< HEAD
 describe("test if user can mint a nft from nft contract successfuly",
+=======
+describe("test if the nft can be minted successfully",
+>>>>>>> cf35ab649af04e1f13afbabc6f01ea712a62fc3f
     async function () {
         it("test if the owner of nft is minter",
             async function () {
@@ -31,7 +54,10 @@ describe("test if user can mint a nft from nft contract successfuly",
                 // check the owner
                 const ownerOfNft = await nft.ownerOf(0)
                 expect(ownerOfNft).to.equal(firstAccount)
+<<<<<<< HEAD
                 console.log("nft owner is: ", ownerOfNft)
+=======
+>>>>>>> cf35ab649af04e1f13afbabc6f01ea712a62fc3f
             })
     })
 //test if user can lock the nft in the pool and send ccip message on source chain
