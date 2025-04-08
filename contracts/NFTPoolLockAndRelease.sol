@@ -105,6 +105,18 @@ contract NFTPoolLockAndRelease is CCIPReceiver, OwnerIsCreator {
         return messageId;
     }
 
+//    function test(address newOwner) public pure returns (address) {
+//         return newOwner;
+//     }
+//     function test2(address newOwner) public view returns (address) {
+//         return msg.sender;
+//     }
+
+    //  function test3(uint256 tokenId, address newOwner, uint64 destChainSelector,address destReceiver) public view  returns (address){
+
+    //   return msg.sender;
+    // }
+
     /// @notice Sends data to receiver on the destination chain.
     /// @notice Pay for fees in LINK.
     /// @dev Assumes your contract has sufficient LINK.

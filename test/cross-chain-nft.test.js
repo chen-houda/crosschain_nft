@@ -35,22 +35,30 @@ describe("test if user can mint a nft from nft contract successfuly",
 //test if user can lock the nft in the pool and send ccip message on source chain
 
 describe("test if user can lock the nft in the pool and send ccip message on source chain"
-    , async function() {
+    , async function () {
         // transfer NFT from source chain to dest chain, check if the nft is locked
         it("transfer NFT from source chain to dest chain, check if the nft is locked",
-            async function() { 
+            async function () {
                 await nft.approve(poolLnU.target, 0)
-                await ccipLocalSimulator.requestLinkFromFaucet(poolLnU.target,ethers.parseEther("10"))
+                await ccipLocalSimulator.requestLinkFromFaucet(poolLnU.target, ethers.parseEther("10"))
                 await poolLnU.lockAndSendNFT(0, firstAccount, chainSelector, poolMnB.target)
                 const newOwner = await nft.ownerOf(0)
+
+                // console.log("firstAccount ", firstAccount)
+                // const aa = await poolLnU.test(firstAccount)
+                // console.log("Result:", aa);
+                // const bb = await poolLnU.test2(firstAccount)
+                // console.log("Result2:", bb);
+                //   const cc = await poolLnU.test3(0, firstAccount, chainSelector, poolMnB.target)
+                // console.log("Result3:", cc);
 
                 expect(newOwner).to.equal(poolLnU.target)
             }
         )
-        // check if the wnft is owned by new owner
-        it("check if wnft's account is owner", 
-            async function() {
-               
+        it("test if user can get a wrapped nft in dest chain",
+            async function () {
+                const newOwner = await wnft.ownerOf(0)
+                expect(newOwner).to.equal(firstAccount)
             }
         )
     }
