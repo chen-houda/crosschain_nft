@@ -81,7 +81,7 @@ contract NFTPoolBurnAndMint is CCIPReceiver, OwnerIsCreator {
     }
 
     // lock NFT and send CCIP transaction
-    function lockAndSendNFT(
+    function burnAndMint(
         uint256 tokenId,
         address newOwner,
         uint64 destChainSelector,
