@@ -1,6 +1,8 @@
 //prepqre variables:contract,account
 const { ethers, deployments, getNamedAccounts, network } = require("hardhat")
 const { assert, expect } = require("chai")
+const { devlopmentChains } = require("../helper-hardhat-config")
+
 
 let firstAccount
 let nft
