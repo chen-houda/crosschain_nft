@@ -21,7 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         destChainRouter = ccipSimulatorConfig.destinationRouter_
         linkToken = ccipSimulatorConfig.linkToken_
     } else {
-        router = networkConfig[network.config.chainId].router
+        destChainRouter = networkConfig[network.config.chainId].router
         linkTokenAddr = networkConfig[network.config.chainId].linkToken
     }
 
@@ -29,7 +29,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
 
     const wnftTx = await deployments.get("WrappedMyToken")
     wnftAddr = wnftTx.address
-    log(`NFT address: ${wnftAddr}`)
+    log(`WNFT address: ${wnftAddr}`)
 
     const nft = await deploy("NFTPoolBurnAndMint", {
         contract: "NFTPoolBurnAndMint",

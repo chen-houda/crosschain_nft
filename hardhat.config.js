@@ -38,7 +38,7 @@ module.exports = {
       chainId: 11155111,//sepolia chain id
       blockConfirmations: 6
     },
-    sepolia: {
+    amoy: {
       url: AMOY_RPC_URL,
       accounts: [PRIVATE_KEY],
       chainId: 80002,//sepolia chain id
