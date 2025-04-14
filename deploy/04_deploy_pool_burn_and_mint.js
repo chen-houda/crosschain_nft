@@ -14,6 +14,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     let destChainRouter
     let linkToken
     let wnftAddr
+    //let wnftAddr = "0x5f80bC9a2f9E2973533E1aB73B735Bfb4dc1e3A4"
     if (devlopmentChains.includes(network.name)) {
         const ccipSimulatorDeployment = await deployments.get("CCIPLocalSimulator")
         const ccipSimulator = await ethers.getContractAt("CCIPLocalSimulator", ccipSimulatorDeployment.address)
@@ -22,7 +23,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         linkToken = ccipSimulatorConfig.linkToken_
     } else {
         destChainRouter = networkConfig[network.config.chainId].router
-        linkTokenAddr = networkConfig[network.config.chainId].linkToken
+        linkToken = networkConfig[network.config.chainId].linkToken
     }
 
 
