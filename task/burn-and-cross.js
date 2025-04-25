@@ -1,7 +1,7 @@
 const { task } = require("hardhat/config")
 const { networkConfig } = require("../helper-hardhat-config")
 
-task("lock-and-cross")
+task("burn-and-cross")
     .addParam("tokenid", "tokenId to be locked and crossed")
     .addOptionalParam("chainselector", "chain selector of destination chain")
     .addOptionalParam("receiver", "receiver in the destination chain")
@@ -22,8 +22,8 @@ task("lock-and-cross")
         if (taskArgs.receiver) {
             receiver = taskArgs.receiver
         } else {
-            const nftBurnAndMint = await hre.companionNetworks["destChain"].deployments.get("NFTPoolBurnAndMint")
-            receiver = nftBurnAndMint.address
+            const lockAndRelease = await hre.companionNetworks["destChain"].deployments.get("NFTPoolLockAndRelease")
+            receiver = lockAndRelease.address
             console.log(`receiver is not set in commoned`)
         }
         console.log(`receiver is ${receiver}`)
@@ -33,27 +33,27 @@ task("lock-and-cross")
 
         const linkTokenAddr = networkConfig[network.config.chainId].linkToken
         const linkToken = await ethers.getContractAt("LinkToken", linkTokenAddr)
-        const nftPoolLockAndRelease = await ethers.getContract("NFTPoolLockAndRelease", firstAccount)
+        const nftPoolBurnAndMint = await ethers.getContract("NFTPoolBurnAndMint", firstAccount)
 
         // // transfer 10 LINK token from deployer to pool
-        const balanceBefore = await linkToken.balanceOf(nftPoolLockAndRelease.target)
+        const balanceBefore = await linkToken.balanceOf(nftPoolBurnAndMint.target)
         console.log(`balance before: ${balanceBefore}`)
-        const transferTx = await linkToken.transfer(nftPoolLockAndRelease.target, ethers.parseEther("10"))
+        const transferTx = await linkToken.transfer(nftPoolBurnAndMint.target, ethers.parseEther("10"))
         await transferTx.wait(6)
-        const balanceAfter = await linkToken.balanceOf(nftPoolLockAndRelease.target)
+        const balanceAfter = await linkToken.balanceOf(nftPoolBurnAndMint.target)
         console.log(`balance after: ${balanceAfter}`)
 
         // approve the pool have the permision to transfer deployer's token
-        const nft = await ethers.getContract("MyToken", firstAccount)
-        //console.log(`MyTokenAddress ${nft.target}`)
-        await nft.approve(nftPoolLockAndRelease.target, tokenId)
-        //console.log(`nftPoolLockAndReleaseAddress ${nftPoolLockAndRelease.target}`)
+        const wnft = await ethers.getContract("WrappedMyToken", firstAccount)
+
+        await wnft.approve(nftPoolBurnAndMint.target, tokenId)
+
         console.log("approve successfully")
 
         // ccip send
         console.log(`${tokenId}, ${firstAccount}, ${chainselector}, ${receiver}`)
-        const lockAndCrossTx = await nftPoolLockAndRelease
-            .lockAndSendNFT(
+        const burnAndCrossTx = await nftPoolBurnAndMint
+            .burnAndMint(
                 tokenId,
                 firstAccount,
                 chainselector,
@@ -61,7 +61,7 @@ task("lock-and-cross")
             )
 
         // provide t
-        console.log(`NFT locked and crossed, transaction hash is ${lockAndCrossTx.hash}`)
+        console.log(`WNFT burn and crossed, transaction hash is ${burnAndCrossTx.hash}`)
 
     })
 
